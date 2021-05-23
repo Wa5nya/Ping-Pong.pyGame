@@ -10,14 +10,15 @@ window.fill(back)
 clock = time.Clock()
 FPS = 60
 run = True
+finish = False
 
 speed_x = 3
 speed_y = 3
 
 class Game_Sprite(sprite.Sprite):
-    def __init__(self, x, y, img, speed, wight, height):
+    def __init__(self, x, y, img, speed, width, height):
         super().__init__()
-        self.img = transform.scale(image.load(img), (60, 60))
+        self.img = transform.scale(image.load(img), (width, height))
         self.rect = self.img.get_rect()
         self.rect.x = x
         self.rect.y = y       
@@ -45,8 +46,8 @@ class RacketR(Game_Sprite):
 
 
 class Ball(Game_Sprite):
-    def __init___(self, x, y, img, wight, height, speed_x, speed_y ):
-        super().__init__( x, y, img, 0, wight, height)
+    def __init__(self, x, y, img, width, height, speed_x, speed_y ):
+        super().__init__( x, y, img, 0, width, height)
         self.speed_x = speed_x
         self.speed_y = speed_y
 
@@ -58,19 +59,36 @@ class Ball(Game_Sprite):
         self.speed_x = speed_x
         self.speed_y = speed_y
 
-racketl = RacketL(300, 300, 'racket.png', 10 )
-
-
+racketl = RacketL(50, 200, 'racket.png', 10, 30, 200 )
+racketr = RacketR(600, 200, 'racket.png', 10, 30, 200 )
+ball = Ball(300, 5, 'tenis_ball.png', 45, 45, speed_x, speed_y)
 
 while run:
-
+    window.fill(back)
     for e in event.get():
         if e.type == QUIT:
             run = False
-
+    
+    racketl.render(window)
+    racketl.update_position()
+    racketr.render(window)
+    racketr.update_position()
+    ball.render(window)
+    ball.update()
     
 
+  
+        
 
+
+    if sprite.collide_rect(racketl, ball) or sprite.collide_rect(racketr, ball):
+        speed_x *= -1
+    
+
+    if ball.rect.y > 500 - 45 or ball.rect.y < 0:
+        speed_y *= -1
+    ball.update_speeds(speed_x, speed_y)
+    
     display.update()
     clock.tick(FPS)
 
